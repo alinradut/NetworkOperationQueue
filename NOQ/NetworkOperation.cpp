@@ -88,7 +88,7 @@ void NetworkOperation::execute()
 {
     pthread_mutex_lock(&_mutex);
     CURL *curl;
-    CURLcode code;
+    CURLcode code = CURLE_FAILED_INIT;
 
     curl = curl_easy_init();
     if(curl)

@@ -64,11 +64,13 @@ void NetworkOperationQueue::update()
             {
                 op->getDelegate()->operationDidFinish(op);
             }
+            delete op;
             it = _inOperation.erase(it);
             finished++;
         }
         else if ( (* it)->getStatus() == NetworkOperationStatusCanceled )
         {
+            delete (* it);
             it = _inOperation.erase(it);
             canceled++;
         }
