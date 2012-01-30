@@ -66,9 +66,9 @@
 		3BCC245914D2C52100F191E3 /* NOQ */ = {
 			isa = PBXGroup;
 			children = (
+				3BCC245A14D2C52100F191E3 /* main.cpp */,
 				3BCC246714D2C54400F191E3 /* NetworkOperation.h */,
 				3BCC246814D2C54400F191E3 /* NetworkOperation.cpp */,
-				3BCC245A14D2C52100F191E3 /* main.cpp */,
 				3BCC245C14D2C52100F191E3 /* NOQ.1 */,
 				3BCC246A14D2D31A00F191E3 /* NetworkOperationQueue.h */,
 				3BCC246B14D2D68C00F191E3 /* NetworkOperationQueue.cpp */,

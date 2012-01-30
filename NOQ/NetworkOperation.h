@@ -25,7 +25,8 @@ typedef enum
     NetworkOperationStatusReady = 0,
     NetworkOperationStatusRunning,
     NetworkOperationStatusFinished,
-    NetworkOperationStatusCanceled
+    NetworkOperationStatusCanceled,
+    NetworkOperationStatusFailed
 } NetworkOperationStatus;
 
 class NetworkOperationDelegate;
@@ -199,7 +200,7 @@ private:
     pthread_t _thread;
     
     // stores the HTTP response code for the curl operation
-    int _responseCode;
+    long _responseCode;
     
     // url to open
     string _url;
@@ -219,6 +220,7 @@ class NetworkOperationDelegate
 {
 public:
     virtual void operationDidFinish(NetworkOperation *operation) = 0;
+    virtual void operationDidFail(NetworkOperation *operation) = 0;
     virtual ~NetworkOperationDelegate() {};
 };
 

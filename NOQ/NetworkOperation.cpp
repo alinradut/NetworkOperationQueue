@@ -8,6 +8,8 @@
 
 #include "NetworkOperation.h"
 
+static pthread_mutex_t *mutex_buf= NULL;
+
 void NetworkOperation::start()
 {
     assert(_status == NetworkOperationStatusReady);
@@ -79,9 +81,8 @@ void * NetworkOperation::startThread(void *operation)
 void NetworkOperation::process(char *data, size_t size)
 {
     _buffer.append(data, size);
-    
-    printf("%s\n", data);
-    fflush(stdout);
+    //printf("%s\n", data);
+    //fflush(stdout);
 }
 
 void NetworkOperation::execute()
@@ -93,12 +94,12 @@ void NetworkOperation::execute()
     curl = curl_easy_init();
     if(curl)
     {
-        if (_httpMethod == "POST")
+        if (_httpMethod.compare("POST"))
         {
             curl_easy_setopt(curl, CURLOPT_POST, 1);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS,this->parameterString());
         }
-        else if (_httpMethod == "DELETE")
+        else if (_httpMethod.compare("DELETE") == 0)
         {
             curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         }
@@ -106,18 +107,29 @@ void NetworkOperation::execute()
         {
             _url.append("?").append(this->parameterString());
         }
+        
+        curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
+        curl_easy_setopt(curl, CURLOPT_DNS_USE_GLOBAL_CACHE, 0);
         curl_easy_setopt(curl, CURLOPT_URL, _url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeProxy);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
         curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, progressProxy);
         curl_easy_setopt(curl, CURLOPT_PROGRESSDATA, this);
+        
         code = curl_easy_perform(curl);
+        if (code == CURLE_OK)
+        {
+            curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &_responseCode);
+        }
+        else
+        {
+            _status = NetworkOperationStatusFailed;
+        }
         curl_easy_cleanup(curl);
     }
     if (_status == NetworkOperationStatusRunning)
     {
         _status = NetworkOperationStatusFinished;
-        _responseCode = code;
     }
     
     pthread_mutex_unlock(&_mutex);

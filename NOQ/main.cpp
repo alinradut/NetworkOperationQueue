@@ -12,10 +12,15 @@
 
 class MyClass : public NetworkOperationDelegate
 {
-public :
+    public :
     virtual void operationDidFinish(NetworkOperation *operation)
     {
-        std::cout << "self: " << this << " operation: " << operation << std::endl;
+        //std::cout << "operationDidFinish self: " << this << " operation: " << operation << std::endl;
+    }
+    
+    virtual void operationDidFail(NetworkOperation *operation)
+    {
+        //std::cout << "operationDidFinish self: " << this << " operation: " << operation << std::endl;
     }
 
     MyClass() : NetworkOperationDelegate()
@@ -35,9 +40,9 @@ int main (int argc, const char * argv[])
     NetworkOperationQueue *queue = new NetworkOperationQueue();
     srand(time(NULL));
     while (1) {
-        int opsToAdd = rand() % 10;
+        int opsToAdd = rand() % 15;
         for (int i=0; i<opsToAdd; i++) {
-            NetworkOperation *op = new NetworkOperation("https://api.github.com/users/hello");
+            NetworkOperation *op = new NetworkOperation("http://www.google.com");
             op->setDelegate(new MyClass());
             queue->addOperation(op);
         }

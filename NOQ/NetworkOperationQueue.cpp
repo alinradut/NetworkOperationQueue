@@ -21,6 +21,7 @@ NetworkOperationQueue *NetworkOperationQueue::sharedInstance()
 
 void NetworkOperationQueue::addOperation(NetworkOperation *op)
 {
+    cout << "adding operation " << op << endl;
     _queued.push_back(op);
 }
 
@@ -45,32 +46,48 @@ void NetworkOperationQueue::cancelOperationsForDelegate(NetworkOperationDelegate
 void NetworkOperationQueue::update()
 {
     vector<NetworkOperation *>::iterator it;
-    it = _inOperation.begin();
+    
     int finished = 0;
+    int failed = 0;
     int canceled = 0;
+    int started = 0;
+    
+    it = _inOperation.begin();
     while (it != _inOperation.end()) 
     {
-        if (rand()%5 == 0)
+        NetworkOperation *op = (* it);
+
+        if ( op->getStatus() == NetworkOperationStatusFinished )
         {
-            (* it)->stop();
-        }
-        if ( (* it)->getStatus() == NetworkOperationStatusFinished )
-        {
-            // notify its delegate that the operation has succeeded
-            // ...
-            //cout << "erasing one op" << endl;
-            NetworkOperation *op = (* it);
             if (op->getDelegate() != NULL)
             {
                 op->getDelegate()->operationDidFinish(op);
             }
+            
+            cout << "operation finished: " << op << endl;
+            
             delete op;
+            
             it = _inOperation.erase(it);
             finished++;
         }
-        else if ( (* it)->getStatus() == NetworkOperationStatusCanceled )
+        else if ( op->getStatus() == NetworkOperationStatusFailed )
         {
-            delete (* it);
+            if (op->getDelegate() != NULL)
+            {
+                op->getDelegate()->operationDidFail(op);
+            }
+            cout << "operation failed: " << op << endl;
+            delete op;
+            
+            it = _inOperation.erase(it);
+            failed++;
+        }
+        else if ( op->getStatus() == NetworkOperationStatusCanceled )
+        {
+            
+            cout << "operation canceled: " << op << endl;
+            delete op;
             it = _inOperation.erase(it);
             canceled++;
         }
@@ -79,32 +96,29 @@ void NetworkOperationQueue::update()
             it++;
         }
     }
-    cout << "finished operations: " << finished << endl;
-    cout << "canceled operations: " << canceled << endl;
-    cout << "active operations: " << _inOperation.size() << " queued: " << _queued.size() << endl;
     
     it = _queued.begin();
     while (it != _queued.end()) {
-        if (rand()%5 == 0)
-        {
-            (* it)->stop();
-        }
+        
         if ( _inOperation.size() >= _maxConcurrentOperations )
         {
-            //cout << "more than 10 operations in queue" << endl;
             break;
         }
-        //cout << "adding one op: " << (* it) << endl;
-        _inOperation.push_back((* it));
+        NetworkOperation *op = (* it);
+        
+        _inOperation.push_back(op);
         it = _queued.erase(it);
     }
     
     for(vector<NetworkOperation *>::iterator it = _inOperation.begin(); it != _inOperation.end(); ++it) 
     {
-        if ( (* it)->getStatus() == NetworkOperationStatusReady )
+        NetworkOperation *op = (* it);
+        if ( op->getStatus() == NetworkOperationStatusReady )
         {
-            //cout << "starting one op" << endl;
-            (* it)->start();
+            op->start();
+            started++;
         }
     }
+    cout << "[" + string(_inOperation.size(), '*') + string(_maxConcurrentOperations - _inOperation.size(), '.') + "] (+ " << _queued.size() << ")" << endl;
+    cout << finished << " finished " << failed << " failed " << canceled << " canceled " << started << " started " << endl;
 }
