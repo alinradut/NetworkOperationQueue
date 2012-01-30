@@ -2,11 +2,11 @@ Originally, the code was supposed to be run on Android and iOS in Cocos2D-x, but
 
 This implementation of the threaded network queue has a number of issues that one should pay attention to:
 
- * in order to start/dequeue an operation you need to periodically call the update method on the NetworkOperationQueue
- * threads are not reused, but each new operation starts its own thread (no worries, at a given time a max of 10 threads are allowed to be started)
- * no support for HTTPS. The libcurl builds that I am using on Android and iPhone do not have OpenSSL support. If you intend to use this code with a SSL enabled CURL make sure you implement the locking functions needed for the SSL provider, otherwise the code will randomly crash on curl_easy_init. Resources:
-	* thread: http://curl.haxx.se/mail/lib-2009-02/0360.html
-	* http://curl.haxx.se/libcurl/c/libcurl-tutorial.html#Multi-threading
-	* example: http://curl.haxx.se/libcurl/c/threaded-ssl.html
+* in order to start/dequeue an operation you need to periodically call the update method on the NetworkOperationQueue
+* threads are not reused, but each new operation starts its own thread (no worries, at a given time a max of 10 threads are allowed to be started)
+* no support for HTTPS. The libcurl builds that I am using on Android and iPhone do not have OpenSSL support. If you intend to use this code with a SSL enabled CURL make sure you implement the locking functions needed for the SSL provider, otherwise the code will randomly crash on curl_easy_init. Resources:
+** thread: http://curl.haxx.se/mail/lib-2009-02/0360.html
+** http://curl.haxx.se/libcurl/c/libcurl-tutorial.html#Multi-threading
+** example: http://curl.haxx.se/libcurl/c/threaded-ssl.html
 
 Patches and feedback very much welcome.
