@@ -8,8 +8,6 @@
 
 #include "NetworkOperation.h"
 
-static pthread_mutex_t *mutex_buf= NULL;
-
 void NetworkOperation::start()
 {
     assert(_status == NetworkOperationStatusReady);
