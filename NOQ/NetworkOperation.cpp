@@ -92,12 +92,12 @@ void NetworkOperation::execute()
     curl = curl_easy_init();
     if(curl)
     {
-        if (_httpMethod.compare("POST"))
+        if (_httpMethod == "POST")
         {
             curl_easy_setopt(curl, CURLOPT_POST, 1);
             curl_easy_setopt(curl, CURLOPT_POSTFIELDS,this->parameterString());
         }
-        else if (_httpMethod.compare("DELETE") == 0)
+        else if (_httpMethod == "DELETE")
         {
             curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
         }
