@@ -42,7 +42,7 @@ int main (int argc, const char * argv[])
     while (1) {
         int opsToAdd = rand() % 15;
         for (int i=0; i<opsToAdd; i++) {
-            NetworkOperation *op = new NetworkOperation("http://www.google.com");
+            NetworkOperation *op = new NetworkOperation("http://www.example.org");
             op->setDelegate(new MyClass());
             queue->addOperation(op);
         }
