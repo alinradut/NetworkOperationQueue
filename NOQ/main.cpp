@@ -38,7 +38,7 @@ int main (int argc, const char * argv[])
 
     // insert code here...
     NetworkOperationQueue *queue = new NetworkOperationQueue();
-    srand(time(NULL));
+    srand((unsigned)time(NULL));
     while (1) {
         int opsToAdd = rand() % 15;
         for (int i=0; i<opsToAdd; i++) {
