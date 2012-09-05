@@ -51,7 +51,7 @@ int NetworkOperation::getResponseCode()
     return _responseCode;
 }
 
-int NetworkOperation::writeProxy(char *data, 
+int NetworkOperation::writeProxy(char *data,
                                  size_t size, 
                                  size_t num, 
                                  void *operation)
@@ -97,10 +97,14 @@ void NetworkOperation::execute()
     curl = curl_easy_init();
     if(curl)
     {
+        const char* param = this->parameterString();
+        char buf[strlen(param) + 1];
+        strncpy(buf, param, sizeof(buf) - 1);
+        buf[sizeof(buf) - 1] = '\0';
         if (_httpMethod.compare("POST") == 0)
         {
             curl_easy_setopt(curl, CURLOPT_POST, 1);
-            curl_easy_setopt(curl, CURLOPT_POSTFIELDS,this->parameterString());
+            curl_easy_setopt(curl, CURLOPT_POSTFIELDS, buf);
         }
         else if (_httpMethod.compare("DELETE") == 0)
         {
@@ -108,7 +112,7 @@ void NetworkOperation::execute()
         }
         else if (_params.size())
         {
-            _url.append("?").append(this->parameterString());
+            _url.append("?").append(buf);
         }
         
         curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1);
