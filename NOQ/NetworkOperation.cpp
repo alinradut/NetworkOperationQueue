@@ -46,6 +46,11 @@ const string NetworkOperation::getResponse()
     return _buffer;
 }
 
+int NetworkOperation::getResponseCode()
+{
+    return _responseCode;
+}
+
 int NetworkOperation::writeProxy(char *data, 
                                  size_t size, 
                                  size_t num, 
