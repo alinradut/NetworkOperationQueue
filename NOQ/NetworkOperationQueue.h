@@ -22,7 +22,7 @@ public:
      Constructor
      */
     NetworkOperationQueue() : _maxConcurrentOperations(10) {};
-    ~NetworkOperationQueue();
+    ~NetworkOperationQueue() {};
     
     /**
      Singleton method that returns a globally shared instance of the class
